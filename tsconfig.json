@@ -1,0 +1,16 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./",
+    "charset": "utf-8",
+    "incremental": true,
+    "lib": ["es2018", "dom"],
+    "outDir": "./dist",
+    "typeRoots": ["node_modules/@types"],
+    "types": ["node", "server"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  }
+}
