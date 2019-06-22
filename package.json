@@ -17,21 +17,25 @@
   },
   "homepage": "https://github.com/wedev-siqr/siqr-server#readme",
   "dependencies": {
+    "cloudinary": "^1.14.0",
     "dotenv": "^8.0.0",
     "pg": "^7.11.0",
     "pg-hstore": "^2.3.2",
     "reflect-metadata": "^0.1.13",
     "sequelize": "^5.8.6",
-    "sequelize-typescript": "^0.6.10",
-    "server": "^1.0.18"
+    "server": "^1.0.18",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
+    "@types/bluebird": "^3.5.27",
     "@types/dotenv": "^6.1.1",
-    "@types/node": "^12.0.2",
-    "@types/sequelize": "^4.28.1",
-    "@types/server": "^1.0.1",
+    "@types/node": "^12.0.8",
+    "@types/sequelize": "^4.28.3",
+    "@types/server": "^1.0.2",
+    "@types/validator": "^10.11.1",
     "nodemon": "^1.19.0",
-    "ts-node": "^8.1.0",
+    "ts-node": "^8.1.1",
+    "tsconfig-paths": "^3.8.0",
     "typescript": "^3.4.5"
   }
 }

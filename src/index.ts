@@ -1,6 +1,8 @@
-import { Sequelize } from 'sequelize-typescript';
-import { routes } from './router';
 import { Context } from 'server/typings/common';
+import { Options } from 'server/typings/options';
+import sequelize from './helpers/db-helper';
+import { routes } from './router';
+import { header } from 'server/reply';
 
 const dotenv = require('dotenv');
 const server = require('server');
@@ -11,31 +13,57 @@ if (env.error) {
   throw env.error;
 }
 
-export const sequelize = new Sequelize({
-  database: process.env.DB_NAME,
-  port: Number(process.env.DB_PORT),
-  host: process.env.DB_HOST,
-  username: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  dialect: 'postgres',
-  modelPaths: [`${__dirname}/models`],
-  define: {
-    charset: 'utf-8',
+const serverConfig: Options | any = {
+  security: {
+    csrf: false,
   },
-});
+};
 
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log('Connection to DB stable.');
-    server({}, routes)
-      .then((ctx: Context) => {
-        console.log('Server enabled on port: ', ctx.options.port);
-      })
-      .catch((err) => {
-        console.error('Error starting server:', err);
-      });
-  })
-  .catch((err) => {
-    console.error('Error conectiong to DB:', err);
-  });
+const cors = [
+  () => header('Access-Control-Allow-Origin', '*'),
+  () =>
+    header(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept'
+    ),
+  () =>
+    header(
+      'Access-Control-Allow-Methods',
+      'GET, PUT, PATCH, POST, DELETE, HEAD'
+    ),
+  (ctx: Context) => (ctx.method.toLowerCase() === 'options' ? 200 : false),
+];
+
+(async () => {
+  try {
+    console.log('[Database] Conecting...');
+    await sequelize.authenticate();
+    console.log('[Database] Connection stable.');
+  } catch (err) {
+    console.error('[Database] Conection error:', err);
+    process.exit(1);
+  }
+
+  try {
+    console.log('[Database] Syncing models...');
+    await sequelize.sync();
+    console.log('[Database] Synced models.');
+  } catch (err) {
+    console.error('[Database] Sync error:', err);
+    process.exit(1);
+  }
+
+  try {
+    console.log('[Server] Starting...');
+    const ctx: Context = await server(serverConfig, cors, routes);
+    console.log('[Server] Started on port', ctx.options.port);
+  } catch (err) {
+    console.error('[Server] Bootstrap error:', err);
+
+    console.log('[Database] Closing connection...');
+    sequelize.close();
+    console.log('[Database] Closed connection.');
+
+    process.exit(1);
+  }
+})();
