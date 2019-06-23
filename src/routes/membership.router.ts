@@ -5,7 +5,7 @@ import {
   updateMembership,
   deleteMembership,
   getMembershipById,
-} from '@siqr/controllers/membership.controller';
+} from '../controllers/membership.controller';
 
 export const membershipRouter = [
   get('/memberships', getMemberships),

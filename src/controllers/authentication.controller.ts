@@ -1,5 +1,3 @@
-import { LoginPayload } from '@siqr/interfaces/authentication.interface';
-import { status } from 'server/reply';
 import { Context } from 'server/typings/common';
 
 export const login = async (ctx: Context) => {

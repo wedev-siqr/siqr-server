@@ -1,11 +1,11 @@
 import { post, get, put, del } from 'server/router';
 import {
-  createClient,
   getClients,
+  getClientById,
+  createClient,
   updateClient,
   deleteClient,
-  getClientById,
-} from '@siqr/controllers/client.controller';
+} from '../controllers/client.controller';
 
 export const clientRouter = [
   get('/clients', getClients),

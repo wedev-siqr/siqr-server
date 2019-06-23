@@ -1,16 +1,16 @@
+import sequelize from '../helpers/db-helper';
 import clientModel from './client.model';
-import sequelize from '@siqr/helpers/db-helper';
 import directionModel from './direction.model';
-import membershipModel from './membership.model';
-import medicalDataModel from './medical-data.model';
 import emergencyContactModel from './emergency-contact.model';
+import medicalDataModel from './medical-data.model';
+import membershipModel from './membership.model';
 import paymentModel from './payment.model';
 
-export { MembershipAttributes } from './membership.model';
 export { ClientAttributes } from './client.model';
 export { DirectionAttributes } from './direction.model';
 export { EmergencyContactAttributes } from './emergency-contact.model';
 export { MedicalDataAttributes } from './medical-data.model';
+export { MembershipAttributes } from './membership.model';
 export { PaymentAttributes } from './payment.model';
 
 export const Client = clientModel(sequelize);

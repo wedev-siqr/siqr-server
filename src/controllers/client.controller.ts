@@ -1,10 +1,14 @@
-import { upload } from '@siqr/helpers/cloudinary-helper';
-import sequelize from '@siqr/helpers/db-helper';
-import { Client, Direction, MedicalData, Membership } from '@siqr/models';
 import { status } from 'server/reply';
 import { Context } from 'server/typings/common';
-import { EmergencyContact } from 'src/models/emergency-contact.model';
-import { where } from 'sequelize/types';
+import {
+  Client,
+  Direction,
+  EmergencyContact,
+  MedicalData,
+  Membership,
+} from '../models';
+import { upload } from '../helpers/cloudinary-helper';
+import sequelize from '../helpers/db-helper';
 const uuid = require('uuid/v1');
 
 export const getClients = async (ctx: Context) => {

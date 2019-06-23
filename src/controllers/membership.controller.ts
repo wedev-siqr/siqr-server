@@ -1,6 +1,6 @@
-import { Membership, MembershipAttributes } from '@siqr/models';
 import { status } from 'server/reply';
 import { Context } from 'server/typings/common';
+import { Membership, MembershipAttributes } from '../models';
 
 export const getMemberships = async (ctx: Context) => {
   ctx.log.info('Starting getMemberships');

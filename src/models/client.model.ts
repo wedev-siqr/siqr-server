@@ -1,5 +1,5 @@
 import { CHAR, DATE, INTEGER, Model, Sequelize, STRING } from 'sequelize';
-import { CURP_REGEX, NAME_REGEX, PHONE_REGEX } from 'src/constants/regex';
+import { CURP_REGEX, NAME_REGEX, PHONE_REGEX } from '../constants/regex';
 
 export interface ClientAttributes {
   id?: number;

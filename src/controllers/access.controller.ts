@@ -1,9 +1,9 @@
-import sequelize from '@siqr/helpers/db-helper';
-import clientModel from '@siqr/models/client.model';
-import { Membership } from '@siqr/models/membership.model';
-import paymentModel from '@siqr/models/payment.model';
 import { status } from 'server/reply';
 import { Context } from 'server/typings/common';
+import clientModel from '../models/client.model';
+import sequelize from '../helpers/db-helper';
+import paymentModel from '../models/payment.model';
+import { Membership } from '../models/membership.model';
 
 const Client = clientModel(sequelize);
 const Payment = paymentModel(sequelize);

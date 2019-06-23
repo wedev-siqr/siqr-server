@@ -9,19 +9,12 @@
     "lib": ["es2018", "dom"],
     "outDir": "./dist",
     "typeRoots": ["node_modules/@types"],
-    "types": ["node", "server", "sequelize", "bluebird", "validator"],
+    "types": ["server", "sequelize", "bluebird"],
     "target": "es2017",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "module": "commonjs",
     "moduleResolution": "node",
-    "strict": true,
-    "paths": {
-      "@siqr/models": ["src/models/index.ts"],
-      "@siqr/interfaces/*": ["src/interfaces/*"],
-      "@siqr/controllers/*": ["src/controllers/*"],
-      "@siqr/helpers/*": ["src/helpers/*"],
-      "@siqr/utils/*": ["src/utils/*"]
-    }
+    "strict": true
   }
 }

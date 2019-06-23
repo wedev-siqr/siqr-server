@@ -1,0 +1,10 @@
+node_modules/
+npm-debug.log
+dist/
+.vscode/
+sql/
+
+.editorconfig
+.prettierrc
+nodemon.json
+
