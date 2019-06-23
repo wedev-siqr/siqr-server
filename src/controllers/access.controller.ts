@@ -1,0 +1,35 @@
+import { status } from 'server/reply';
+import { Context } from 'server/typings/common';
+import clientModel from '../models/client.model';
+import sequelize from '../helpers/db-helper';
+import paymentModel from '../models/payment.model';
+import { Membership } from '../models/membership.model';
+
+const Client = clientModel(sequelize);
+const Payment = paymentModel(sequelize);
+
+export const accessWithCode = async (ctx: Context) => {
+  ctx.log.info('Starting accessWithCode');
+  const { accessCode } = ctx.req.body;
+  try {
+    ctx.log.info('Search client with code: %s', accessCode);
+    const client = await Client.findOne({
+      where: { code: accessCode },
+      include: [
+        {
+          model: Membership,
+          as: 'membership',
+        },
+      ],
+    });
+    if (!client) {
+      ctx.log.error("Client with code %s doesn't exist.", accessCode);
+      return status(404).json({
+        message: `Client with code ${accessCode} doesn't exist.`,
+      });
+    }
+  } catch (error) {
+    ctx.log.error('Finishing accessWithCode with errors');
+    return status(409).json(error);
+  }
+};
