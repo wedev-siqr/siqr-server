@@ -9,7 +9,7 @@
     "lib": ["es2018", "dom"],
     "outDir": "./dist",
     "typeRoots": ["node_modules/@types"],
-    "types": ["server", "sequelize", "bluebird"],
+    "types": ["node", "server", "sequelize", "bluebird"],
     "target": "es2017",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,

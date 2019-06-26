@@ -29,7 +29,6 @@ export default (sequelize: Sequelize) => {
         allowNull: false,
         type: DOUBLE,
         validate: {
-          isDecimal: true,
           min: 0,
         },
       },

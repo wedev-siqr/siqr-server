@@ -6,10 +6,12 @@ import {
   EmergencyContact,
   MedicalData,
   Membership,
+  Payment,
 } from '../models';
 import { upload } from '../helpers/cloudinary-helper';
 import sequelize from '../helpers/db-helper';
 const uuid = require('uuid/v1');
+import * as moment from 'moment';
 
 export const getClients = async (ctx: Context) => {
   ctx.log.info('Starting getClients');
@@ -18,6 +20,7 @@ export const getClients = async (ctx: Context) => {
 
     const clients = await Client.findAll({
       where: searchFilters,
+      order: ['id'],
     });
 
     ctx.log.info('Finishing getClients');
@@ -63,6 +66,54 @@ export const getClientById = async (ctx: Context) => {
   } catch (error) {
     return status(500).json(error);
   }
+};
+
+export const getClientByCode = async (ctx: Context) => {
+  const { code } = ctx.req.query;
+  ctx.log.info('Getting client: %d', code);
+  const client: any = await Client.findOne({
+    where: { code: code },
+    attributes: {
+      include: [
+        'id',
+        'name',
+        'first_surname',
+        'second_surname',
+        'membership_id',
+        'register_date',
+      ],
+    },
+  });
+  ctx.log.info('Getting membership');
+  const membership: any = await Membership.findByPk(client.membershipId);
+  ctx.log.info('Getting payments');
+  const payments = await Payment.findAll({
+    where: {
+      client_id: client.id,
+    },
+    order: [['date', 'DESC']],
+  });
+
+  const [lastPayment]: any = payments;
+
+  const timeUnit =
+    membership.durationTimeUnit != 'M'
+      ? membership.durationTimeUnit.toLowerCase()
+      : membership.durationTimeUnit;
+
+  const expireDate = lastPayment
+    ? moment(lastPayment.date).add(membership.duration, timeUnit)
+    : moment(client.registerDate).add(membership.duration, timeUnit);
+  ctx.log.info('Finishing getCllientByCode');
+  return status(200).json({
+    id: client.id,
+    name: client.name,
+    firstSurname: client.firstSurname,
+    secondSurname: client.secondSurname,
+    membership: membership.name,
+    price: membership.price,
+    expireDate,
+  });
 };
 
 export const createClient = async (ctx: Context) => {
@@ -113,11 +164,12 @@ export const createClient = async (ctx: Context) => {
     ctx.log.info('Created emegency contact');
 
     ctx.log.info('Uploading photo');
-    const uploadResponse: any = await upload(payload.photo.photo);
+    const code = new Date().getTime();
+    const uploadResponse: any = await upload(payload.photo.photo, code);
     ctx.log.info('Uploaded photo');
 
     ctx.log.info('Creating client');
-    const code = uuid();
+
     const clientPayload = {
       ...payload.info,
       directionId: direction.id,
@@ -134,7 +186,7 @@ export const createClient = async (ctx: Context) => {
     transaction.commit();
 
     ctx.log.info('Finishing createClient');
-    return status(204).json({ code });
+    return status(200).json({ code });
   } catch (error) {
     ctx.log.error('Rollingback transaction');
     transaction.rollback();
@@ -145,7 +197,48 @@ export const createClient = async (ctx: Context) => {
 };
 
 export const updateClient = async (ctx: Context) => {
-  return status(501);
+  const id = ctx.params.id;
+  const payload = ctx.req.body;
+
+  ctx.log.info('Get client');
+  const client: any = await Client.findByPk(payload.info.id);
+
+  ctx.log.info('Update direction');
+  await Direction.update(payload.address, {
+    where: {
+      id: client.directionId,
+    },
+  });
+
+  ctx.log.info('Update Medicaldata');
+  await MedicalData.update(payload.medicalInfo, {
+    where: {
+      id: client.medicalDataId,
+    },
+  });
+
+  ctx.log.info('Get medical data');
+  const md: any = await MedicalData.findByPk(client.medicalDataId);
+
+  ctx.log.info('Update contact');
+  await EmergencyContact.update(payload.emergencyContact, {
+    where: {
+      medical_data_id: md.id,
+    },
+  });
+
+  ctx.log.info('Upload photo');
+  const { url }: any = await upload(payload.photo.photo, client.code);
+
+  ctx.log.info('Update client');
+  await Client.update(
+    { ...payload.info, photoUrl: url },
+    {
+      where: { id },
+    }
+  );
+
+  return status(204);
 };
 
 export const deleteClient = async (ctx: Context) => {
@@ -171,4 +264,13 @@ export const deleteClient = async (ctx: Context) => {
     ctx.log.error('Finishing deleteClient with errors.');
     return status(409).json(error);
   }
+};
+
+export const getQRCode = async (ctx: Context) => {
+  const clientId = ctx.params.id;
+  const client: any = await Client.findByPk(clientId);
+  return status(200).json({
+    code: client.code,
+    name: `${client.name} ${client.firstSurname} ${client.secondSurname}`,
+  });
 };

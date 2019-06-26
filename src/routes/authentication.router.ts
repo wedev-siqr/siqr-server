@@ -1,4 +1,4 @@
 import { post } from 'server/router';
-import { login } from '../controllers/authentication.controller';
+import { accessWithCode } from 'src/controllers/access.controller';
 
-export const authenticationRoutes = [post('/authentication/login', login)];
+export const authenticationRoutes = [post('/access', accessWithCode)];

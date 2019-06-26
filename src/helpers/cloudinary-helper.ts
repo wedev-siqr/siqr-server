@@ -12,11 +12,11 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export const upload = (file: string) =>
+export const upload = (file: string, code: number) =>
   new Promise((resolve, reject) => {
     cloudinary.uploader.upload(
       file,
-      { folder: 'siqr', resource_type: 'image' },
+      { folder: 'siqr', resource_type: 'image', public_id: code },
       (error: any, result: any) => {
         if (error) reject(error);
         resolve(result);
