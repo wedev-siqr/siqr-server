@@ -1,8 +1,7 @@
 import { status } from 'server/reply';
 import { Context } from 'server/typings/common';
-import { Client, Payment } from 'src/models';
-import { json } from 'body-parser';
-import sequelize from 'src/helpers/db-helper';
+import sequelize from '../helpers/db-helper';
+import { Client, Payment } from '../models';
 import moment = require('moment');
 
 export const getPayments = async ({ log, req }: Context) => {
